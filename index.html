@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoulMate - Find Your Perfect Match</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+:root{--pink:#ff4d6d;--purple:#7b2ff7;--dark:#1a1a2e;--light:#fff5f7}
+body{background:var(--light);color:#222}
+header{background:#fff;position:sticky;top:0;z-index:10;box-shadow:0 2px 15px rgba(0,0,0,.08)}
+.nav{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:14px 20px}
+.logo{font-size:28px;font-weight:900;color:var(--pink)}
+.logo span{color:var(--purple)}
+.nav-links{display:flex;gap:22px}
+.nav-links a{text-decoration:none;color:#333;font-weight:600;cursor:pointer}
+.nav-links a.active{color:var(--pink)}
+.btn{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;padding:10px 22px;border-radius:25px;font-weight:700;cursor:pointer}
+.hero{max-width:1200px;margin:auto;padding:40px 20px;text-align:center}
+.hero h1{font-size:48px;line-height:1.1}
+.hero h1 i{color:var(--pink);font-style:normal}
+.hero p{margin:16px auto;max-width:600px;color:#666;font-size:17px}
+.tabs{display:flex;justify-content:center;gap:10px;margin:20px 0;flex-wrap:wrap}
+.tab{padding:10px 20px;border-radius:25px;border:1.5px solid #ddd;background:#fff;cursor:pointer;font-weight:600}
+.tab.active{background:var(--dark);color:#fff;border-color:var(--dark)}
+.container{max-width:1200px;margin:auto;padding:0 20px 40px}
+.page{display:none}.page.active{display:block}
+.card-wrap{display:flex;justify-content:center}
+.profile-card{background:#fff;width:100%;max-width:380px;border-radius:24px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,.15)}
+.profile-card img{width:100%;height:420px;object-fit:cover}
+.profile-info{padding:18px}
+.profile-info h2{font-size:26px}
+.profile-info h2 span{color:var(--pink);font-size:18px}
+.badge{display:inline-block;background:#ffe0e6;color:var(--pink);padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700;margin:8px 4px 8px 0}
+.profile-info p{color:#555;margin-top:6px}
+.actions{display:flex;justify-content:center;gap:18px;padding:18px}
+.circle{width:64px;height:64px;border-radius:50%;border:none;font-size:28px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.pass{background:#fff}.like{background:var(--pink);color:#fff}.super{background:#ffe066}
+.matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.match-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,.08);cursor:pointer}
+.match-card img{width:100%;height:260px;object-fit:cover}
+.match-card div{padding:14px}
+.form{background:#fff;max-width:500px;margin:auto;padding:26px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.form input,.form select,.form textarea{width:100%;padding:12px;margin:8px 0;border:1.5px solid #ddd;border-radius:12px;outline:none}
+.chat-box{background:#fff;max-width:600px;margin:auto;border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.chat-head{background:var(--dark);color:#fff;padding:14px 18px;display:flex;gap:10px;align-items:center}
+.chat-head img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.msgs{height:320px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:75%;padding:10px 14px;border-radius:16px}
+.me{align-self:flex-end;background:var(--pink);color:#fff}
+.other{align-self:flex-start;background:#eee}
+.chat-input{display:flex;padding:12px;gap:8px}
+.chat-input input{flex:1;padding:12px;border-radius:25px;border:1.5px solid #ddd}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:99}
+.modal.show{display:flex}
+.modal-box{background:#fff;padding:30px;border-radius:24px;text-align:center;max-width:340px;width:90%}
+.modal-box h2{font-size:32px;color:var(--pink)}
+footer{text-align:center;padding:20px;color:#888}
+@media(max-width:600px){.hero h1{font-size:34px}.nav-links{display:none}.profile-card img{height:340px}}
+</style>
+</head>
+<body>
+
+<header><div class="nav">
+<div class="logo">Soul<span>Mate</span> ❤️</div>
+<div class="nav-links">
+<a class="active" onclick="showPage('discover',this)">Discover</a>
+<a onclick="showPage('matches',this)">Matches</a>
+<a onclick="showPage('chat',this)">Chat</a>
+<a onclick="showPage('profile',this)">My Profile</a>
+</div>
+<button class="btn" onclick="showPage('profile',null)">Join Free</button>
+</div></header>
+
+<section class="hero">
+<h1>Find Your <i>SoulMate</i><br>Not Just a Match.</h1>
+<p>Real people. Real vibes. Real connections. Swipe, match and start your love story today.</p>
+<div class="tabs">
+<button class="tab active" onclick="filterGender('All',this)">All</button>
+<button class="tab" onclick="filterGender('Girl',this)">Girls</button>
+<button class="tab" onclick="filterGender('Boy',this)">Boys</button>
+<button class="tab" onclick="filterGender('Nearby',this)">Nearby 📍</button>
+</div>
+</section>
+
+<div class="container">
+<!-- DISCOVER -->
+<div id="discover" class="page active">
+<div class="card-wrap" id="cardArea"></div>
+<div class="actions">
+<button class="circle pass" onclick="swipe('pass')">✖️</button>
+<button class="circle super" onclick="swipe('super')">⭐</button>
+<button class="circle like" onclick="swipe('like')">❤️</button>
+</div>
+<p style="text-align:center;color:#888" id="counter"></p>
+</div>
+
+<!-- MATCHES -->
+<div id="matches" class="page">
+<h2 style="margin-bottom:16px">Your Matches 💘</h2>
+<div class="matches-grid" id="matchesGrid"></div>
+</div>
+
+<!-- CHAT -->
+<div id="chat" class="page">
+<div class="chat-box">
+<div class="chat-head"><img id="chatImg" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200"><div><b id="chatName">Aanya, 22</b><br><small style="color:#7CFC00">● Online</small></div></div>
+<div class="msgs" id="msgs">
+<div class="msg other">Heyy! Your profile is really cute 😊</div>
+<div class="msg me">Thank you! Yours too ❤️</div>
+<div class="msg other">So, coffee or long drive? ☕🚗</div>
+</div>
+<div class="chat-input"><input id="chatInput" placeholder="Type a message..."><button class="btn" onclick="sendMsg()">Send</button></div>
+</div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<div class="form">
+<h2>Create Your SoulMate Profile</h2>
+<input id="myName" placeholder="Your Name">
+<input id="myAge" type="number" placeholder="Your Age">
+<select id="myGender"><option>Girl</option><option>Boy</option></select>
+<input id="myCity" placeholder="Your City - e.g. Mau Ranipur">
+<textarea id="myBio" placeholder="Write about yourself..."></textarea>
+<button class="btn" style="width:100%" onclick="saveProfile()">Create Profile & Start Matching →</button>
+<p id="profileMsg" style="text-align:center;margin-top:10px;color:green;font-weight:700"></p>
+</div>
+</div>
+</div>
+
+<!-- MATCH MODAL -->
+<div class="modal" id="matchModal"><div class="modal-box">
+<div style="font-size:60px">💘</div><h2>It's a Match!</h2>
+<p id="matchText" style="margin:12px 0;color:#555"></p>
+<button class="btn" onclick="closeMatch();showPage('chat',null)">Start Chatting 💬</button><br><br>
+<button onclick="closeMatch()" style="background:none;border:none;cursor:pointer;color:#888">Keep Swiping</button>
+</div></div>
+
+<footer>© 2026 SoulMate - Made with ❤️ by Vaibhav Kansal</footer>
+
+<script>
+const profiles=[
+{name:"Aanya",age:22,city:"Delhi • 2 km",gender:"Girl",img:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600",bio:"Love chai, books & late night talks. Looking for someone real, not perfect.",tags:["Chai Lover","Traveller","Music"]},
+{name:"Riya",age:21,city:"Lucknow • 5 km",gender:"Girl",img:"https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600",bio:"Dancer, dreamer & foodie. If you can make me laugh, you already won.",tags:["Dancer","Foodie","Funny"]},
+{name:"Arjun",age:24,city:"Kanpur • 3 km",gender:"Boy",img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600",bio:"Gym, bikes & old songs. Simple guy looking for a real connection.",tags:["Gym","Bikes","Loyal"]},
+{name:"Priya",age:23,city:"Jhansi • 8 km",gender:"Girl",img:"https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600",bio:"Artist & overthinker. Let's get lost in good conversations.",tags:["Artist","Poet","Chai"]},
+{name:"Kabir",age:25,city:"Agra • 12 km",gender:"Boy",img:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600",bio:"Startup guy, dog lover. Searching for my partner in crime.",tags:["Startup","Dog Lover","Travel"]},
+{name:"Sneha",age:20,city:"Mau Ranipur • 1 km",gender:"Girl",img:"https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600",bio:"Local girl, big dreams. Coffee first, then we will see? ☕",tags:["Nearby","Cute","Coffee"]},
+];
+let current=0, filtered=[...profiles], matched=[];
+function render(){
+let area=document.getElementById('cardArea');
+if(current>=filtered.length){area.innerHTML=`<div style="background:#fff;padding:40px;border-radius:20px;text-align:center"><h2>No more profiles 😔</h2><p>Change filter or come back later.</p><button class="btn" style="margin-top:12px" onclick="reset()">Show Again</button></div>`;document.getElementById('counter').innerText="";return}
+let p=filtered[current];
+area.innerHTML=`<div class="profile-card"><img src="${p.img}"><div class="profile-info"><h2>${p.name}, ${p.age} <span>• ${p.city}</span></h2>${p.tags.map(t=>`<span class="badge">${t}</span>`).join('')}<p>${p.bio}</p></div></div>`;
+document.getElementById('counter').innerText=(current+1)+" / "+filtered.length+" profiles";
+}
+function swipe(type){
+let p=filtered[current];
+if(type==='like' || type==='super'){
+matched.push(p);
+document.getElementById('matchText').innerText=`You & ${p.name} liked each other!`;
+document.getElementById('matchModal').classList.add('show');
+renderMatches();
+}
+current++; render();
+}
+function reset(){current=0;filtered=[...profiles];render()}
+function filterGender(g,el){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+if(g==='All') filtered=[...profiles];
+else if(g==='Nearby') filtered=profiles.filter(p=>p.city.includes('Mau')||p.city.includes('1 km')||p.city.includes('2 km'));
+else filtered=profiles.filter(p=>p.gender===g);
+current=0;render();
+}
+function renderMatches(){
+let g=document.getElementById('matchesGrid');
+if(matched.length===0){g.innerHTML="<p>No matches yet. Go and Like someone ❤️</p>";return}
+g.innerHTML=matched.map(m=>`<div class="match-card" onclick="openChat('${m.name}','${m.img}')"><img src="${m.img}"><div><b>${m.name}, ${m.age}</b><p style="color:#888">${m.city}</p></div></div>`).join('');
+}
+function showPage(id,el){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+if(el){document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));el.classList.add('active')}
+window.scrollTo({top:0,behavior:'smooth'});
+}
+function closeMatch(){document.getElementById('matchModal').classList.remove('show')}
+function openChat(name,img){document.getElementById('chatName').innerText=name;document.getElementById('chatImg').src=img;showPage('chat',null)}
+function sendMsg(){
+let inp=document.getElementById('chatInput');if(!inp.value.trim())return;
+let box=document.getElementById('msgs');box.innerHTML+=`<div class="msg me">${inp.value}</div>`;let text=inp.value;inp.value='';
+setTimeout(()=>{box.innerHTML+=`<div class="msg other">Haha nice! Tell me more 😍</div>`;box.scrollTop=box.scrollHeight},800);
+box.scrollTop=box.scrollHeight;
+}
+function saveProfile(){
+let n=document.getElementById('myName').value;
+if(!n){alert('Please enter your name');return}
+document.getElementById('profileMsg').innerText=`Welcome ${n}! Your SoulMate profile is created ❤️`;
+setTimeout(()=>showPage('discover',null),1000);
+}
+render();renderMatches();
+</script>
+</body>
+</html>
